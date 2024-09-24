@@ -53,9 +53,7 @@ pub fn craft_zombie(connection: TcpStream) -> Option<Zombie> {
     match Zombie::build(connection) {
         Ok(Zombie) => Some(Zombie),
         Err(e) => {
-            error!(
-                format!("Error occurred when crafting the zombie: {e}")
-            );
+            error!("Error occurred when crafting the zombie: {}", e);
             None
         }
     }
