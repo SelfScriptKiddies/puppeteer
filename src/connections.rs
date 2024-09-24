@@ -21,7 +21,11 @@ pub fn start_catching(addr: SocketAddr, connection_keeper: Arc<Mutex<ConnectionK
             },
         };
 
-        let zombie = craft_zombie(connection).expect("Failed to craft zombie");
+        let zombie = match craft_zombie(connection) {
+            Some(zombie) => zombie,
+            None => { continue; }
+        };
+
         debug!("Crafted zombie: {zombie:?}");
         connection_keeper.lock().unwrap().add_zombie(zombie);
     }

