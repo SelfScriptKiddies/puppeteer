@@ -1,3 +1,4 @@
+use std::thread::available_parallelism;
 use log::trace;
 use crate::connections::zombie_processor::Zombie;
 
@@ -16,5 +17,9 @@ impl ConnectionKeeper {
     pub fn add_zombie(&mut self, zombie: Zombie) {
         trace!("{zombie:?} was inserted in global array");
         self.available_connections.push(zombie);
+    }
+
+    pub fn get_length(&self) -> usize {
+        self.available_connections.len()
     }
 }
