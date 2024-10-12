@@ -1,4 +1,5 @@
 mod connections;
+mod api;
 
 use std::net::SocketAddr;
 use std::sync::{Arc, Mutex};
@@ -12,6 +13,7 @@ pub fn run() {
             connection_keeper::ConnectionKeeper::new()
         )
     );
-
+    std::thread::spawn(|| api::start_server());
     connections::start_catching(addr, connection_keeper);
+
 }
